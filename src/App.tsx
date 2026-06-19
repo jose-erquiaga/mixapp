@@ -1,17 +1,26 @@
 import { useState } from 'react';
-import { Track } from '@/types/model';
 import { AudioContextProvider } from '@/audio/AudioContextProvider';
 import { LibraryPanel } from '@/features/library/LibraryPanel';
+import { useLibrary } from '@/features/library/useLibrary';
+import { EditorPanel } from '@/features/waveform-editor/EditorPanel';
+import { useBlocks } from '@/features/waveform-editor/useBlocks';
 import './App.css';
 
 /**
- * Layout raíz de MIXAPP. Integra las capabilities del MVP:
+ * Layout raíz de MIXAPP. Orquesta el estado compartido (biblioteca y bloques)
+ * y lo reparte entre las capabilities del MVP:
  *  - Biblioteca (library): importar pistas
- *  - Editor de pista (waveform-editor): marcar bloques (pendiente)
+ *  - Editor de pista (waveform-editor): marcar bloques
  *  - Lienzo de mezcla + reproducción (mix-canvas / playback): pendiente
  */
 function AppContent() {
-  const [pistaSeleccionada, setPistaSeleccionada] = useState<Track | null>(null);
+  const library = useLibrary();
+  const blocks = useBlocks();
+  const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
+
+  // Derivar la pista activa de la lista para que los cambios (p. ej. BPM) se reflejen.
+  const pistaActiva = library.pistas.find((p) => p.id === trackSeleccionadoId) ?? null;
+  const bloquesActivos = pistaActiva ? blocks.bloquesDePista(pistaActiva.id) : [];
 
   return (
     <div className="app">
@@ -23,15 +32,32 @@ function AppContent() {
       <main className="app__layout">
         <section className="panel" aria-label="Biblioteca">
           <h2>Biblioteca</h2>
-          <LibraryPanel onSelectTrack={setPistaSeleccionada} />
+          <LibraryPanel
+            pistas={library.pistas}
+            importando={library.importando}
+            error={library.error}
+            onImportar={library.importarArchivos}
+            onBpmChange={library.actualizarBpm}
+            onEliminar={(id) => {
+              if (id === trackSeleccionadoId) setTrackSeleccionadoId(null);
+              library.eliminarPista(id);
+            }}
+            onLimpiarError={library.limpiarError}
+            onSelectTrack={(t) => setTrackSeleccionadoId(t.id)}
+            trackSeleccionadoId={trackSeleccionadoId ?? undefined}
+          />
         </section>
 
         <section className="panel" aria-label="Editor de pista">
           <h2>Editor de pista</h2>
-          {pistaSeleccionada ? (
-            <p className="panel__info">
-              Seleccionada: <strong>{pistaSeleccionada.nombre}</strong> ({pistaSeleccionada.bpm} BPM)
-            </p>
+          {pistaActiva ? (
+            <EditorPanel
+              track={pistaActiva}
+              bloques={bloquesActivos}
+              onCrearBloque={(b) => blocks.crearBloque(b)}
+              onActualizarBloque={blocks.actualizarBloque}
+              onEliminarBloque={blocks.eliminarBloque}
+            />
           ) : (
             <p className="panel__placeholder">Selecciona una pista para marcar bloques.</p>
           )}
@@ -39,7 +65,10 @@ function AppContent() {
 
         <section className="panel panel--wide" aria-label="Lienzo de mezcla">
           <h2>Lienzo de mezcla</h2>
-          <p className="panel__placeholder">Arrastra bloques aquí para secuenciar la mezcla.</p>
+          <p className="panel__placeholder">
+            Arrastra bloques aquí para secuenciar la mezcla. ({blocks.bloques.length} bloque(s)
+            disponibles)
+          </p>
         </section>
       </main>
     </div>

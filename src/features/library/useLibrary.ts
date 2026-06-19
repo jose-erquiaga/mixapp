@@ -7,6 +7,7 @@ import { useState, useCallback } from 'react';
 import { Track } from '@/types/model';
 import { decodificarArchivo, FormatoNoSoportadoError } from '@/audio/decode';
 import { estimarBpm } from '@/audio/bpm';
+import { putTrackAudio, removeTrackAudio } from '@/audio/trackStore';
 
 export interface LibraryState {
   pistas: Track[];
@@ -42,18 +43,18 @@ export function useLibrary(): LibraryState & LibraryActions {
           const bpm = (await estimarBpm(buffer)) ?? 120;
 
           // Crear pista
+          const fileRef = crypto.randomUUID();
           const pista: Track = {
             id: crypto.randomUUID(),
             nombre: file.name.replace(/\.[^/.]+$/, ''), // quitar extensión
-            fileRef: crypto.randomUUID(), // placeholder; en Fase 1 guardamos el buffer en memoria
+            fileRef,
             sampleRate,
             duracionSeg,
             bpm,
           };
 
-          // Guardar el AudioBuffer en un Map global (simplista para MVP; en Fase 2 → IndexedDB)
-          (window as any).__MIXAPP_AUDIO_BUFFERS__ = (window as any).__MIXAPP_AUDIO_BUFFERS__ || {};
-          (window as any).__MIXAPP_AUDIO_BUFFERS__[pista.fileRef] = buffer;
+          // Guardar audio (File + AudioBuffer) en el almacén compartido.
+          putTrackAudio(fileRef, file, buffer);
 
           setPistas((prev) => [...prev, pista]);
         } catch (err) {
@@ -80,7 +81,7 @@ export function useLibrary(): LibraryState & LibraryActions {
     setPistas((prev) => {
       const pista = prev.find((p) => p.id === trackId);
       if (pista) {
-        delete (window as any).__MIXAPP_AUDIO_BUFFERS__?.[pista.fileRef];
+        removeTrackAudio(pista.fileRef);
       }
       return prev.filter((p) => p.id !== trackId);
     });

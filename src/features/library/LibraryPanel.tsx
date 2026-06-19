@@ -1,52 +1,64 @@
 /**
  * Panel de biblioteca: drop zone + listado de pistas.
+ * Presentacional: el estado vive en `useLibrary`, elevado a App.
  */
 
 import { useEffect } from 'react';
 import { Track } from '@/types/model';
 import { DropZone } from './DropZone';
 import { TrackList } from './TrackList';
-import { useLibrary } from './useLibrary';
 import './LibraryPanel.css';
 
 export interface LibraryPanelProps {
+  pistas: Track[];
+  importando: boolean;
+  error: string | null;
+  onImportar: (files: File[]) => void;
+  onBpmChange: (trackId: string, bpm: number) => void;
+  onEliminar: (trackId: string) => void;
+  onLimpiarError: () => void;
   onSelectTrack?: (track: Track) => void;
+  trackSeleccionadoId?: string;
 }
 
-export function LibraryPanel({ onSelectTrack }: LibraryPanelProps) {
-  const { pistas, importando, error, importarArchivos, actualizarBpm, eliminarPista, limpiarError } =
-    useLibrary();
-
+export function LibraryPanel({
+  pistas,
+  importando,
+  error,
+  onImportar,
+  onBpmChange,
+  onEliminar,
+  onLimpiarError,
+  onSelectTrack,
+}: LibraryPanelProps) {
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(limpiarError, 5000);
+      const timer = setTimeout(onLimpiarError, 5000);
       return () => clearTimeout(timer);
     }
-  }, [error, limpiarError]);
+  }, [error, onLimpiarError]);
 
   return (
     <div className="library-panel">
       <div className="library-panel__section">
-        <DropZone onFilesSelected={importarArchivos} disabled={importando} />
+        <DropZone onFilesSelected={onImportar} disabled={importando} />
       </div>
 
       {error && (
         <div className="library-panel__error">
           <p>{error}</p>
-          <button onClick={limpiarError} className="library-panel__error-close">
+          <button onClick={onLimpiarError} className="library-panel__error-close">
             ✕
           </button>
         </div>
       )}
 
       <div className="library-panel__section">
-        <h3 className="library-panel__title">
-          Pistas ({pistas.length})
-        </h3>
+        <h3 className="library-panel__title">Pistas ({pistas.length})</h3>
         <TrackList
           pistas={pistas}
-          onBpmChange={actualizarBpm}
-          onDelete={eliminarPista}
+          onBpmChange={onBpmChange}
+          onDelete={onEliminar}
           onSelect={onSelectTrack}
         />
       </div>

@@ -1,0 +1,134 @@
+.wf-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wf-editor__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.wf-editor__track {
+  font-weight: 600;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wf-editor__bpm {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.wf-editor__canvas {
+  position: relative;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid #333;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.wf-editor__wave {
+  position: relative;
+  z-index: 1;
+}
+
+.wf-editor__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.wf-editor__beat {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.wf-editor__beat--compas {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.wf-editor__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.wf-editor__iman {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  user-select: none;
+}
+
+.wf-editor__sel {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.wf-editor__etiqueta {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.wf-editor__etiqueta:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.wf-editor__crear {
+  padding: 0.5rem 1rem;
+  background: #4a9eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wf-editor__crear:hover:not(:disabled) {
+  background: #2a7ed4;
+}
+
+.wf-editor__crear:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.wf-editor__cuenta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .wf-editor__controls {
+    gap: 0.5rem;
+  }
+  .wf-editor__etiqueta {
+    min-width: 100%;
+    order: 10;
+  }
+}
