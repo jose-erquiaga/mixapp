@@ -1,9 +1,9 @@
 # Tasks
 
 ## 1. Scaffold del proyecto
-- [ ] 1.1 Crear proyecto React + Vite + TypeScript
-- [ ] 1.2 Configurar lint/format y estructura de carpetas
-- [ ] 1.3 Añadir wavesurfer.js y librería de BPM (tras spike)
+- [x] 1.1 Crear proyecto React + Vite + TypeScript
+- [x] 1.2 Configurar lint/format y estructura de carpetas
+- [x] 1.3 Añadir wavesurfer.js y librería de BPM (tras spike)
 
 ## 2. Biblioteca (capability: library)
 - [ ] 2.1 Importar archivos por arrastre y selector
