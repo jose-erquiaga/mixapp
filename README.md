@@ -1,7 +1,8 @@
 # MIXAPP
 
 Constructor de mezclas musicales **por bloques**, pensado para usuario no-DJ y
-funcionando **100% en el navegador** con los archivos de audio del propio
+funcionando **100% en el navegador** (un detalle en cuanto a esto, la idea es q todo se desarrolle/utilice en el móvil)
+con los archivos de audio del propio
 usuario. Importas tus canciones, las troceas en bloques (intro, estribillo,
 outro…) y los arrastras a un lienzo para armar una mezcla encadenada.
 
