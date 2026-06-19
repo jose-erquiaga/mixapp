@@ -85,3 +85,10 @@
   opacity: 1;
   width: 6px;
 }
+
+.playbar__hint {
+  flex: 1;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+}

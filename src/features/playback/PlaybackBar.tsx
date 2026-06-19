@@ -51,22 +51,31 @@ export function PlaybackBar({
 
       <span className="playbar__tiempo">{mmss(posSeg)}</span>
 
-      <div className="playbar__pista">
-        {/* Marcadores de bloque (saltar tocando) */}
-        {iniciosBloque.map((ini, i) => (
-          <button
-            key={i}
-            className="playbar__marca"
-            style={{ left: `${totalSeg > 0 ? (ini / totalSeg) * 100 : 0}%`, background: secuencia[i]?.block.color }}
-            onClick={() => onSaltar(i)}
-            aria-label={`Saltar a ${secuencia[i]?.block.etiqueta ?? 'bloque'}`}
-            title={secuencia[i]?.block.etiqueta}
-          />
-        ))}
-        {/* Progreso + cabezal */}
-        <div className="playbar__progreso" style={{ width: `${pct}%` }} />
-        <div className="playbar__cabezal" style={{ left: `${pct}%` }} />
-      </div>
+      {vacio ? (
+        <div className="playbar__hint">
+          Crea bloques en el editor y pulsa «Añadir» para armar la secuencia y reproducir.
+        </div>
+      ) : (
+        <div className="playbar__pista">
+          {/* Marcadores de bloque (saltar tocando) */}
+          {iniciosBloque.map((ini, i) => (
+            <button
+              key={i}
+              className="playbar__marca"
+              style={{
+                left: `${totalSeg > 0 ? (ini / totalSeg) * 100 : 0}%`,
+                background: secuencia[i]?.block.color,
+              }}
+              onClick={() => onSaltar(i)}
+              aria-label={`Saltar a ${secuencia[i]?.block.etiqueta ?? 'bloque'}`}
+              title={secuencia[i]?.block.etiqueta}
+            />
+          ))}
+          {/* Progreso + cabezal */}
+          <div className="playbar__progreso" style={{ width: `${pct}%` }} />
+          <div className="playbar__cabezal" style={{ left: `${pct}%` }} />
+        </div>
+      )}
 
       <span className="playbar__tiempo">{mmss(totalSeg)}</span>
     </div>
