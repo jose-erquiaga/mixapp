@@ -6,6 +6,8 @@ import { EditorPanel } from '@/features/waveform-editor/EditorPanel';
 import { useBlocks } from '@/features/waveform-editor/useBlocks';
 import { MixCanvasPanel } from '@/features/mix-canvas/MixCanvasPanel';
 import { useMixCanvas } from '@/features/mix-canvas/useMixCanvas';
+import { PlaybackBar } from '@/features/playback/PlaybackBar';
+import { usePlayback } from '@/features/playback/usePlayback';
 import './App.css';
 
 /**
@@ -19,6 +21,7 @@ function AppContent() {
   const library = useLibrary();
   const blocks = useBlocks();
   const canvas = useMixCanvas();
+  const playback = usePlayback(canvas.secuencia, library.pistas);
   const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
 
   // Derivar la pista activa de la lista para que los cambios (p. ej. BPM) se reflejen.
@@ -68,6 +71,16 @@ function AppContent() {
 
         <section className="panel panel--wide" aria-label="Lienzo de mezcla">
           <h2>Lienzo de mezcla</h2>
+          <PlaybackBar
+            secuencia={canvas.secuencia}
+            posSeg={playback.posSeg}
+            totalSeg={playback.totalSeg}
+            reproduciendo={playback.reproduciendo}
+            iniciosBloque={playback.iniciosBloque}
+            onPlay={playback.play}
+            onPause={playback.pause}
+            onSaltar={playback.saltarABloque}
+          />
           <MixCanvasPanel
             bloquesDisponibles={blocks.bloques}
             tracks={library.pistas}

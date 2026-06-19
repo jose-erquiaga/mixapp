@@ -1,0 +1,87 @@
+.playbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.playbar__play {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: #4a9eff;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.playbar__play:hover:not(:disabled) {
+  background: #2a7ed4;
+}
+
+.playbar__play:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.playbar__tiempo {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+}
+
+.playbar__pista {
+  position: relative;
+  flex: 1;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.playbar__progreso {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(74, 158, 255, 0.25);
+}
+
+.playbar__cabezal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fff;
+  transform: translateX(-1px);
+}
+
+.playbar__marca {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  opacity: 0.85;
+  transform: translateX(-2px);
+}
+
+.playbar__marca:hover {
+  opacity: 1;
+  width: 6px;
+}
