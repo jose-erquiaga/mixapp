@@ -2,21 +2,24 @@
  * Detección de BPM (tarea 2.3).
  *
  * Envoltorio fino sobre la librería de detección para que el resto de la app
- * no dependa de su API concreta. La elección definitiva queda pendiente del
- * spike (ver design.md / tasks 1.3); de momento se usa web-audio-beat-detector
- * por ser ligera y suficiente para el MVP. Cambiarla solo afecta a este módulo.
+ * no dependa de su API concreta. Tras el spike (ver `spike/bpm/`) se eligió
+ * **realtime-bpm-analyzer**: ligera (~160 KB, sin dependencias), muy mantenida
+ * y robusta frente a jitter y ruido. Cambiarla solo afecta a este módulo.
  */
 
-import { analyze } from 'web-audio-beat-detector';
+import { analyzeFullBuffer } from 'realtime-bpm-analyzer';
 
 /**
  * Estima el BPM de un AudioBuffer. Devuelve un entero redondeado.
- * Si la estimación falla, devuelve `null` para que la UI pida el BPM manual.
+ * Si la estimación falla o no encuentra candidatos, devuelve `null` para que
+ * la UI pida el BPM manual (ver spec library, corrección manual).
  */
 export async function estimarBpm(buffer: AudioBuffer): Promise<number | null> {
   try {
-    const tempo = await analyze(buffer);
-    return Math.round(tempo);
+    const candidatos = await analyzeFullBuffer(buffer);
+    if (!candidatos || candidatos.length === 0) return null;
+    // El primer candidato es el de mayor confianza (más coincidencias).
+    return Math.round(candidatos[0].tempo);
   } catch {
     return null;
   }

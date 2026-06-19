@@ -24,9 +24,15 @@ manual con imán al beat es la base fiable; la IA de secciones se pospone a Fase
 - `Transition`: { tipo: 'cut'|'crossfade'|'bpm-match', duracionSeg?, bpmObjetivo? }
 - `Project`: { id, nombre, tracks[], bloquesOrdenados: [{block, transitionSaliente}] }
 
+## Decisiones cerradas tras spike
+- **Librería de BPM**: `realtime-bpm-analyzer` (ver `spike/bpm/`). Es la más
+  ligera (~160 KB, sin deps), la más mantenida y robusta a jitter/ruido en la
+  prueba cuantitativa. Se descartan `web-audio-beat-detector` (acoplada a
+  Worker/Blob, solo navegador) y `essentia.js` (10 MB y ~4 años sin cambios;
+  reconsiderable en Fase 3 para MIR avanzado). Validación con música real
+  pendiente en el issue de Biblioteca.
+
 ## Open questions
-- Librería de BPM/beats definitiva (precisión vs peso): spike comparando
-  web-audio-beat-detector vs essentia.js.
 - ¿Detección de downbeats (compás) o solo beats en Fase 1? MVP: solo beats.
 - Formatos de importación a garantizar (mp3/wav seguro; m4a/ogg/flac según
   soporte de `decodeAudioData` del navegador objetivo).

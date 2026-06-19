@@ -13,7 +13,7 @@ outro…) y los arrastras a un lienzo para armar una mezcla encadenada.
 - **React + Vite + TypeScript**
 - **Web Audio API** (motor de audio)
 - **wavesurfer.js** (onda + interacción)
-- **web-audio-beat-detector** (detección de BPM — provisional, pendiente de spike)
+- **realtime-bpm-analyzer** (detección de BPM — elegida tras spike, ver `spike/bpm/`)
 - **IndexedDB** (persistencia local)
 
 ## Puesta en marcha
