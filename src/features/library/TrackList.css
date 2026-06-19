@@ -1,0 +1,117 @@
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.track-list-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.track-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #555;
+}
+
+.track-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-item__nombre {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-item__meta {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.track-item__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.track-item__bpm-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.track-item__label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.track-item__input {
+  width: 60px;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.track-item__input:focus {
+  outline: none;
+  border-color: #4a9eff;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.track-item__delete {
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.track-item__delete:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .track-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .track-item__controls {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.75rem;
+    justify-content: space-between;
+  }
+}
