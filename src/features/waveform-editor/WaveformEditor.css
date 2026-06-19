@@ -57,6 +57,56 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+.wf-editor__nudge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.wf-editor__nudge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.wf-editor__nudge-label {
+  width: 48px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.wf-editor__nudge-row button {
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.wf-editor__nudge-row button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.wf-editor__nudge-row button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wf-editor__nudge-val {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-variant-numeric: tabular-nums;
+}
+
 .wf-editor__controls {
   display: flex;
   align-items: center;

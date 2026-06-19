@@ -9,9 +9,12 @@ manual con imán al beat es la base fiable; la IA de secciones se pospone a Fase
 - **Navegadores objetivo**: Chrome, Edge y Firefox de escritorio como base.
   Safari y móviles requieren pruebas aparte (Web Audio en iOS suspende el audio
   de forma agresiva; `decodeAudioData` no soporta todos los formatos).
-- **UI escritorio + móvil responsive desde el inicio**: el escritorio (ratón,
-  pantalla grande) es el caso de uso principal para arrastrar bloques y editar
-  la onda con precisión, pero el layout debe adaptarse y ser usable en móvil.
+- **UI móvil primero, interacción por toques**: el móvil es el dispositivo
+  objetivo real (se usará sobre todo ahí). Las interacciones se diseñan para el
+  dedo: ajuste de marcas con botones de nudge (±beat / ±fino) en vez de
+  arrastrar con precisión, y "añadir al lienzo" / reordenar con controles
+  explícitos en vez de drag-and-drop frágil. El arrastrar puede convivir como
+  comodidad en escritorio, pero no es el patrón base.
 - Empaquetado "instalable" (PWA / Tauri / Electron) se valora en Fase 2+; no
   afecta al código actual.
 

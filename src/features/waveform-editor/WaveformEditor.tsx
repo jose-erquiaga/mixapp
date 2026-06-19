@@ -116,6 +116,22 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
     setEtiqueta('');
   };
 
+  // Ajuste por toques (móvil-first): mover inicio o fin sin arrastrar.
+  const ajustar = (cual: 'inicio' | 'fin', delta: number) => {
+    const region = seleccionRef.current;
+    if (!region) return;
+    let { start: inicio, end: fin } = region;
+    if (cual === 'inicio') {
+      inicio = Math.max(0, Math.min(inicio + delta, fin - 0.05));
+    } else {
+      fin = Math.min(track.duracionSeg, Math.max(fin + delta, inicio + 0.05));
+    }
+    region.setOptions({ start: inicio, end: fin });
+    setSeleccion({ inicio, fin });
+  };
+
+  const beat = intervaloBeatSeg(track.bpm);
+
   return (
     <div className="wf-editor">
       <div className="wf-editor__head">
@@ -139,17 +155,47 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
         </div>
       </div>
 
+      {/* Ajuste por toques de inicio y fin (móvil-first). */}
+      <div className="wf-editor__nudge">
+        <div className="wf-editor__nudge-row">
+          <span className="wf-editor__nudge-label">Inicio</span>
+          <button onClick={() => ajustar('inicio', -beat)} disabled={!listo} aria-label="Inicio −1 beat">
+            ⏮
+          </button>
+          <button onClick={() => ajustar('inicio', -0.05)} disabled={!listo} aria-label="Inicio fino −">
+            −
+          </button>
+          <span className="wf-editor__nudge-val">{seleccion ? seleccion.inicio.toFixed(2) : '—'}s</span>
+          <button onClick={() => ajustar('inicio', 0.05)} disabled={!listo} aria-label="Inicio fino +">
+            +
+          </button>
+          <button onClick={() => ajustar('inicio', beat)} disabled={!listo} aria-label="Inicio +1 beat">
+            ⏭
+          </button>
+        </div>
+        <div className="wf-editor__nudge-row">
+          <span className="wf-editor__nudge-label">Fin</span>
+          <button onClick={() => ajustar('fin', -beat)} disabled={!listo} aria-label="Fin −1 beat">
+            ⏮
+          </button>
+          <button onClick={() => ajustar('fin', -0.05)} disabled={!listo} aria-label="Fin fino −">
+            −
+          </button>
+          <span className="wf-editor__nudge-val">{seleccion ? seleccion.fin.toFixed(2) : '—'}s</span>
+          <button onClick={() => ajustar('fin', 0.05)} disabled={!listo} aria-label="Fin fino +">
+            +
+          </button>
+          <button onClick={() => ajustar('fin', beat)} disabled={!listo} aria-label="Fin +1 beat">
+            ⏭
+          </button>
+        </div>
+      </div>
+
       <div className="wf-editor__controls">
         <label className="wf-editor__iman">
           <input type="checkbox" checked={iman} onChange={(e) => setIman(e.target.checked)} />
           Imán al beat
         </label>
-
-        {seleccion && (
-          <span className="wf-editor__sel">
-            {seleccion.inicio.toFixed(2)}s → {seleccion.fin.toFixed(2)}s
-          </span>
-        )}
 
         <input
           className="wf-editor__etiqueta"
