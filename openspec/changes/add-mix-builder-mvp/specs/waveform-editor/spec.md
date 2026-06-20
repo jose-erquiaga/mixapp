@@ -44,3 +44,43 @@ El sistema SHALL permitir reproducir de forma aislada la región de un bloque.
 #### Scenario: Reproducir la región del bloque
 - **WHEN** el usuario pulsa previsualizar sobre un bloque
 - **THEN** se reproduce solo el audio comprendido entre su inicio y su fin
+
+### Requirement: Reproducción integrada en el editor para marcar por oído
+El sistema SHALL reproducir la pista completa y la región marcada (en loop),
+permitiendo al usuario marcar inicio y fin escuchando el audio.
+
+#### Scenario: Reproducir pista completa
+- **WHEN** el usuario pulsa ▶ Pista
+- **THEN** la pista comienza a reproducirse desde la posición actual del cabezal
+- **AND** se actualiza el cabezal en tiempo real mostrando la posición
+
+#### Scenario: Reproducir región en loop
+- **WHEN** el usuario pulsa 🔁 Loop selección
+- **THEN** la reproducción comienza desde el inicio de la región marcada
+- **AND** cuando alcanza el fin de la región, reinicia automáticamente desde el inicio
+
+#### Scenario: Marcar inicio escuchando (por oído)
+- **GIVEN** la pista en reproducción
+- **WHEN** el usuario pulsa ⇤ Inicio aquí en el punto exacto deseado
+- **THEN** el inicio de la región se fija en la posición actual del cabezal
+- **AND** si el imán al beat está activo, el inicio se imanta al beat más cercano
+
+#### Scenario: Marcar fin escuchando (por oído)
+- **GIVEN** la pista en reproducción
+- **WHEN** el usuario pulsa Fin aquí ⇥ en el punto exacto deseado
+- **THEN** el fin de la región se fija en la posición actual del cabezal
+- **AND** si el imán al beat está activo, el fin se imanta al beat más cercano
+
+### Requirement: Ajuste fino con flechas sin que el imán lo pise
+El sistema SHALL permitir ajustar inicio y fin con botones de nudge (±beat / ±fino)
+sin que el imán al beat interfiera.
+
+#### Scenario: Ajustar con flechas
+- **WHEN** el usuario pulsa una flecha de nudge (±beat o ±fino) en inicio o fin
+- **THEN** la marca se mueve en esa dirección sin ser rechazada por el imán
+- **AND** el ajuste se aplica de forma programática (no se dispara el imán)
+
+#### Scenario: El imán no rechaza cambios de nudge
+- **GIVEN** el imán al beat activo
+- **WHEN** el usuario hace un ajuste con las flechas
+- **THEN** el imán no rehace el ajuste; queda en la posición elegida por las flechas

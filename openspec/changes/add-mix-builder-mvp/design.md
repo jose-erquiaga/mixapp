@@ -47,6 +47,42 @@ manual con imán al beat es la base fiable; la IA de secciones se pospone a Fase
   reconsiderable en Fase 3 para MIR avanzado). Validación con música real
   pendiente en el issue de Biblioteca.
 
+## Decisiones implementadas en editor de pista
+
+### Reproducción integrada en el editor
+El editor integra reproducción de la pista completa y de la región marcada (loop),
+permitiendo al usuario oír la selección mientras la ajusta. Controles:
+- **▶ Pista**: play/pause de la pista completa (cabezal sin restricción).
+- **🔁 Loop selección**: play/pause que reinicia automáticamente al llegar al fin
+  de la región (útil para afinar sin que pase toda la pista).
+
+El cabezal se actualiza en tiempo real (timeupdate), mostrando el tiempo actual
+en la cabecera para referencia visual.
+
+### Marcado por oído ("marcar aquí")
+Dos botones permiten fijar inicio o fin en la posición actual del cabezal:
+- **⇤ Inicio aquí**: fija el inicio en la posición del cabezal (imantado al beat
+  si el imán está activo).
+- **Fin aquí ⇥**: fija el fin en la posición del cabezal (imantado al beat si
+  el imán está activo).
+
+Junto con la reproducción integrada, esto permite flujo óptimo en móvil:
+"reproduce, cuando suena el punto justo pulsa 'Inicio aquí', continúa hasta
+el siguiente punto y pulsa 'Fin aquí ⇥'".
+
+### Arreglo: separación entre cambios manuales y cambios programáticos del imán
+**Problema**: El imán al beat pisaba cambios de nudge (flechas ±beat/±fino),
+devolviendo la marca al beat inmediatamente y frustrando el ajuste fino.
+
+**Solución**: Introduje flag `programaticoRef` en `WaveformEditor.tsx` que
+marca cambios originados en código (flechas, "Marcar aquí", `aplicarSeleccion`)
+para que el imán sepa ignorarlos. Solo el arrastrador manual de la región activa
+el imán. Esto preserva:
+- Arrastre manual: se imanta al beat si está activo.
+- Flechas/botones: no son pisados por el imán.
+- "Marcar aquí": se imanta al beat si está activo, pero el imán no lo rehace
+  por ser programático.
+
 ## Open questions
 - ¿Detección de downbeats (compás) o solo beats en Fase 1? MVP: solo beats.
 - Formatos de importación a garantizar (mp3/wav seguro; m4a/ogg/flac según
