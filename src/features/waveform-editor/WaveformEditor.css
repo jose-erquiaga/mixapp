@@ -57,6 +57,38 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+.wf-editor__transport {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.wf-editor__transport button {
+  min-height: 44px;
+  padding: 0 0.85rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.wf-editor__transport button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.wf-editor__transport button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wf-editor__marcar {
+  border-color: #4a9eff !important;
+  color: #9ecbff !important;
+}
+
 .wf-editor__nudge {
   display: flex;
   flex-direction: column;
