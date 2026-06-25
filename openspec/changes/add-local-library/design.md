@@ -19,11 +19,14 @@
   para que la identidad sea idéntica en cualquier dispositivo/contexto.
 
 ## Catálogo en IndexedDB (guardado manual)
-- Almacén `canciones`, indexado por songId(hash). Registro:
-  `{ id, nombre, bpm, sampleRate, duracionSeg, file: Blob, bloques: Block[], guardadoEn }`.
+- BD separada `mixapp-biblioteca` (no interfiere con la BD de proyecto `mixapp`).
+  Almacén `canciones` con `keyPath: 'id'`, indexado por songId(hash). Registro:
+  `{ id, nombre, bpm, sampleRate, duracionSeg, file: File, bloques: Block[], guardadoEn }`.
 - La acción "Guardar en biblioteca" persiste las canciones del workspace y sus
   bloques. No hay autoguardado (decisión del usuario).
 - El audio se guarda una sola vez por canción (no duplicado por proyecto).
+- Implementado en `src/features/local-library/libraryStore.ts` (CRUD) y
+  `useLocalLibrary.ts` (hook de orquestación).
 
 ## Re-vinculación de bloques
 - **Cargar desde la biblioteca**: decodificar el `File` guardado → `trackStore`,

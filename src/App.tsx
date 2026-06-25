@@ -10,6 +10,7 @@ import { PlaybackBar } from '@/features/playback/PlaybackBar';
 import { usePlayback } from '@/features/playback/usePlayback';
 import { PersistencePanel } from '@/features/persistence/PersistencePanel';
 import { usePersistence } from '@/features/persistence/usePersistence';
+import { useLocalLibrary } from '@/features/local-library/useLocalLibrary';
 import './App.css';
 
 /**
@@ -33,6 +34,10 @@ function AppContent() {
     reemplazarBloques: blocks.reemplazarBloques,
     reemplazarSecuencia: canvas.reemplazarSecuencia,
   });
+  const localLib = useLocalLibrary({
+    pistas: library.pistas,
+    bloques: blocks.bloques,
+  });
   const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
 
   // Derivar la pista activa de la lista para que los cambios (p. ej. BPM) se reflejen.
@@ -53,6 +58,11 @@ function AppContent() {
           onGuardar={persistence.guardar}
           onCargar={persistence.cargar}
           onExportar={persistence.exportarWav}
+          bibliotecaOcupado={localLib.ocupado}
+          bibliotecaEstado={localLib.estado}
+          puedeGuardarBiblioteca={library.pistas.length > 0}
+          onGuardarBiblioteca={localLib.guardarEnBiblioteca}
+          hayBiblioteca={localLib.hayBiblioteca}
         />
       </header>
 

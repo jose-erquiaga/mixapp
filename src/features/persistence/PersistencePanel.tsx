@@ -1,6 +1,6 @@
 /**
- * Barra de proyecto: guardar/cargar en IndexedDB y exportar la mezcla a WAV.
- * Presentacional; la lógica vive en `usePersistence`.
+ * Barra de proyecto: guardar/cargar en IndexedDB, exportar WAV y guardar en
+ * la biblioteca local persistente. Presentacional.
  */
 
 import './PersistencePanel.css';
@@ -14,6 +14,12 @@ export interface PersistencePanelProps {
   onGuardar: () => void;
   onCargar: () => void;
   onExportar: () => void;
+  bibliotecaOcupado?: boolean;
+  bibliotecaEstado?: string | null;
+  puedeGuardarBiblioteca?: boolean;
+  onGuardarBiblioteca?: () => void;
+  onAbrirBiblioteca?: () => void;
+  hayBiblioteca?: boolean;
 }
 
 export function PersistencePanel({
@@ -25,25 +31,44 @@ export function PersistencePanel({
   onGuardar,
   onCargar,
   onExportar,
+  bibliotecaOcupado,
+  bibliotecaEstado,
+  puedeGuardarBiblioteca,
+  onGuardarBiblioteca,
+  onAbrirBiblioteca,
+  hayBiblioteca,
 }: PersistencePanelProps) {
+  const todoOcupado = ocupado || !!bibliotecaOcupado;
   return (
     <div className="proyecto-barra">
       <div className="proyecto-barra__acciones">
-        <button onClick={onGuardar} disabled={ocupado || !puedeGuardar}>
+        <button onClick={onGuardar} disabled={todoOcupado || !puedeGuardar}>
           💾 Guardar
         </button>
-        <button onClick={onCargar} disabled={ocupado || !hayGuardado}>
+        <button onClick={onCargar} disabled={todoOcupado || !hayGuardado}>
           📂 Cargar
         </button>
         <button
           className="proyecto-barra__exportar"
           onClick={onExportar}
-          disabled={ocupado || !puedeExportar}
+          disabled={todoOcupado || !puedeExportar}
         >
           ⬇ Exportar WAV
         </button>
+        {onGuardarBiblioteca && (
+          <button onClick={onGuardarBiblioteca} disabled={todoOcupado || !puedeGuardarBiblioteca}>
+            📚 Guardar en biblioteca
+          </button>
+        )}
+        {onAbrirBiblioteca && (
+          <button onClick={onAbrirBiblioteca} disabled={todoOcupado || !hayBiblioteca}>
+            📖 Biblioteca
+          </button>
+        )}
       </div>
-      {estado && <span className="proyecto-barra__estado">{estado}</span>}
+      {(estado || bibliotecaEstado) && (
+        <span className="proyecto-barra__estado">{bibliotecaEstado || estado}</span>
+      )}
     </div>
   );
 }

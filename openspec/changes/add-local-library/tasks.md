@@ -6,9 +6,9 @@
 - [x] 1.3 Dedupe al importar (mismo hash → reutilizar, no duplicar)
 
 ## 2. Catálogo en IndexedDB (guardado manual)
-- [ ] 2.1 Almacén `canciones` (audio + metadatos + bloques) indexado por hash
-- [ ] 2.2 Acción "Guardar en biblioteca" (persistir canciones + bloques)
-- [ ] 2.3 Eliminar canción de la biblioteca
+- [x] 2.1 Almacén `canciones` (audio + metadatos + bloques) indexado por hash
+- [x] 2.2 Acción "Guardar en biblioteca" (persistir canciones + bloques)
+- [x] 2.3 Eliminar canción de la biblioteca
 
 ## 3. Vista de biblioteca local
 - [ ] 3.1 Listar canciones guardadas (nombre, BPM, duración, nº de bloques)
