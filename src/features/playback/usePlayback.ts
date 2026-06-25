@@ -33,16 +33,23 @@ export function usePlayback(secuencia: SequencedBlock[], tracks: Track[]): Playb
     });
   }
 
-  // Mapa estable trackId → bpm.
-  const bpmPorPista = useMemo(() => {
-    const m = new Map<string, number>();
-    for (const t of tracks) m.set(t.id, t.bpm);
+  // Mapa estable trackId → { bpm, fileRef }. El trackStore se indexa por
+  // fileRef, así que el plan necesita resolver trackId → fileRef para hallar
+  // el AudioBuffer (id y fileRef son UUIDs distintos).
+  const datosPorPista = useMemo(() => {
+    const m = new Map<string, { bpm: number; fileRef: string }>();
+    for (const t of tracks) m.set(t.id, { bpm: t.bpm, fileRef: t.fileRef });
     return m;
   }, [tracks]);
 
   const plan = useMemo(
-    () => construirPlan(secuencia, (id) => bpmPorPista.get(id) ?? 120),
-    [secuencia, bpmPorPista],
+    () =>
+      construirPlan(
+        secuencia,
+        (id) => datosPorPista.get(id)?.bpm ?? 120,
+        (id) => datosPorPista.get(id)?.fileRef,
+      ),
+    [secuencia, datosPorPista],
   );
 
   // Cargar el plan en el reproductor cuando cambie.

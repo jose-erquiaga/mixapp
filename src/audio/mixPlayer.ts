@@ -42,11 +42,13 @@ export interface PlanMezcla {
 
 /**
  * Construye el plan de reproducción a partir de la secuencia. Resuelve los
- * buffers desde el trackStore y calcula tiempos y solapes.
+ * buffers desde el trackStore (que está cacheado por `fileRef`, no por
+ * `trackId`) y calcula tiempos y solapes.
  */
 export function construirPlan(
   secuencia: SequencedBlock[],
   bpmDePista: (trackId: string) => number,
+  fileRefDePista: (trackId: string) => string | undefined,
 ): PlanMezcla {
   const items: PlanItem[] = [];
   const iniciosBloque: number[] = [];
@@ -54,7 +56,8 @@ export function construirPlan(
 
   for (let i = 0; i < secuencia.length; i++) {
     const { block } = secuencia[i];
-    const buffer = getTrackBuffer(block.trackId);
+    const fileRef = fileRefDePista(block.trackId);
+    const buffer = fileRef ? getTrackBuffer(fileRef) : undefined;
     if (!buffer) continue;
 
     // Rate del bloque: lo fija la transición ENTRANTE (la saliente del anterior).
