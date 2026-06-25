@@ -3,6 +3,7 @@
  */
 
 import { Track, Block } from '@/types/model';
+import { colorParaPista } from '@/util/color';
 import './TrackList.css';
 
 export interface TrackListProps {
@@ -24,6 +25,18 @@ function formatTiempo(seg: number): string {
 
 function durBloque(b: Block): string {
   return `${(b.finSeg - b.inicioSeg).toFixed(1)}s`;
+}
+
+/** Bloque sintético que cubre la pista completa (0 … duracionSeg). */
+function bloqueDePistaEntera(pista: Track): Block {
+  return {
+    id: `pista-${pista.id}`,
+    trackId: pista.id,
+    etiqueta: pista.nombre,
+    inicioSeg: 0,
+    finSeg: pista.duracionSeg,
+    color: colorParaPista(pista.id),
+  };
 }
 
 export function TrackList({
@@ -92,8 +105,20 @@ export function TrackList({
               </div>
             </div>
 
-            {bloques.length > 0 && (
-              <div className="track-item__bloques">
+            {onAnadirBloque && (
+              <div className="track-item__acciones">
+                <button
+                  className="track-item__pista-entera"
+                  style={{ borderColor: colorParaPista(pista.id) }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAnadirBloque(bloqueDePistaEntera(pista));
+                  }}
+                  title="Añadir la pista entera a la secuencia"
+                >
+                  <span className="track-item__bloque-plus">＋</span> Pista entera
+                </button>
+
                 {bloques.map((b) => (
                   <button
                     key={b.id}
@@ -101,7 +126,7 @@ export function TrackList({
                     style={{ borderColor: b.color }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onAnadirBloque?.(b);
+                      onAnadirBloque(b);
                     }}
                     title={`Añadir "${b.etiqueta}" a la secuencia`}
                   >

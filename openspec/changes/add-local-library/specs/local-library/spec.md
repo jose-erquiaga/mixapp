@@ -65,3 +65,10 @@ al cargar (o re-importar) esa canción sus bloques vuelvan a estar disponibles.
 - **GIVEN** una pista en la biblioteca con bloques disponibles
 - **THEN** sus bloques se muestran como chips dentro de la tarjeta de esa pista
 - **AND** al tocar un chip el bloque se añade a la secuencia del lienzo
+
+#### Scenario: Añadir la pista entera a la secuencia
+- **GIVEN** una pista en la biblioteca
+- **WHEN** el usuario pulsa "Pista entera" en su tarjeta
+- **THEN** se añade a la secuencia un bloque que cubre la canción completa
+  (de 0 a su duración total)
+- **AND** se reproduce y exporta como cualquier otro bloque de la secuencia

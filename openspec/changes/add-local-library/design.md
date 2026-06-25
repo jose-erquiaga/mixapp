@@ -52,6 +52,12 @@
   llama a `anadirBloque` (mismo handler que el panel "Bloques disponibles" del
   lienzo) y añade el bloque a la secuencia. Solo toque, sin arrastrar
   (móvil-first); el panel del lienzo se mantiene en paralelo.
+- **Pista entera**: la misma fila incluye un botón "＋ Pista entera" que crea un
+  `Block` sintético que cubre `0 … duracionSeg` (id `pista-<trackId>`, color de
+  la pista) y lo añade con `anadirBloque`. No se persiste en el almacén de
+  bloques: la secuencia y el motor de audio trabajan sobre `inicioSeg/finSeg`,
+  así que reproduce, exporta y se guarda como cualquier otro bloque sin tocar el
+  modelo ni el motor.
 
 ## Relación con la persistencia de proyecto (#6)
 - El catálogo de canciones+bloques es la fuente persistente de audio y bloques.

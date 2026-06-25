@@ -108,11 +108,33 @@
   background: rgba(255, 107, 107, 0.1);
 }
 
-/* Fila de bloques de la pista (chips para añadir a la secuencia). */
-.track-item__bloques {
+/* Fila de acciones de la pista: "pista entera" + chips de bloque. */
+.track-item__acciones {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+}
+
+/* Botón para añadir la pista completa a la secuencia. */
+.track-item__pista-entera {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.3rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid #555;
+  border-left-width: 3px;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.track-item__pista-entera:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .track-item__bloque-chip {
