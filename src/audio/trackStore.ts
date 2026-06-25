@@ -26,6 +26,11 @@ export function getTrackBuffer(fileRef: string): AudioBuffer | undefined {
   return almacen.get(fileRef)?.buffer;
 }
 
+/** Devuelve el `File` original de una pista (para persistirlo en IndexedDB). */
+export function getTrackFile(fileRef: string): File | undefined {
+  return almacen.get(fileRef)?.file;
+}
+
 /** Devuelve (creando si hace falta) un object URL del archivo, para wavesurfer. */
 export function getTrackObjectUrl(fileRef: string): string | undefined {
   const entrada = almacen.get(fileRef);

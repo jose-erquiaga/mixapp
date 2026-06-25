@@ -5,13 +5,15 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SequencedBlock, Track } from '@/types/model';
-import { MixPlayer, construirPlan } from '@/audio/mixPlayer';
+import { MixPlayer, construirPlan, type PlanMezcla } from '@/audio/mixPlayer';
 
 export interface PlaybackState {
   posSeg: number;
   totalSeg: number;
   reproduciendo: boolean;
   iniciosBloque: number[];
+  /** Plan de mezcla actual (para exportar offline a WAV). */
+  plan: PlanMezcla;
   play: () => void;
   pause: () => void;
   saltarABloque: (index: number) => void;
@@ -71,6 +73,7 @@ export function usePlayback(secuencia: SequencedBlock[], tracks: Track[]): Playb
     totalSeg,
     reproduciendo,
     iniciosBloque: plan.iniciosBloque,
+    plan,
     play: () => {
       playerRef.current?.play();
       setReproduciendo(true);

@@ -98,6 +98,22 @@ el imán. Esto preserva:
 - "Marcar aquí": se imanta al beat si está activo, pero el imán no lo rehace
   por ser programático.
 
+## Persistencia y exportación (implementado)
+- **IndexedDB, un único proyecto "actual"**: el MVP guarda un solo proyecto
+  (slot fijo) en dos almacenes: `proyecto` (snapshot serializable: pistas,
+  bloques, secuencia + meta) y `archivos` (los `File` de audio originales,
+  indexados por `fileRef`). Guardar reemplaza por completo lo anterior. Multi-
+  proyecto con nombres queda para Fase 2. Ver `features/persistence/projectStore.ts`.
+- **Carga = re-decodificar**: al abrir un proyecto se vuelve a decodificar cada
+  `File` a `AudioBuffer` y se repuebla el `trackStore`; luego se reemplaza el
+  estado de los hooks (`reemplazarPistas/Bloques/Secuencia`).
+- **Export WAV = render offline + encoder propio**: la mezcla se renderiza con
+  `OfflineAudioContext` reutilizando el MISMO programador de fuentes que la
+  reproducción en vivo (`programarPlan`, en `mixPlayer.ts`), así el WAV suena
+  idéntico a lo que se oye. El `AudioBuffer` resultante se codifica a WAV PCM
+  16-bit (`audio/wav.ts`, sin dependencias) y se descarga. MP3 (encoder WASM)
+  queda para más adelante.
+
 ## Open questions
 - ¿Detección de downbeats (compás) o solo beats en Fase 1? MVP: solo beats.
 - Formatos de importación a garantizar (mp3/wav seguro; m4a/ogg/flac según

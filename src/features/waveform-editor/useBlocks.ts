@@ -20,6 +20,8 @@ export interface BlocksActions {
   }): Block;
   actualizarBloque(id: string, cambios: Partial<Omit<Block, 'id' | 'trackId'>>): void;
   eliminarBloque(id: string): void;
+  /** Reemplaza todos los bloques (al cargar un proyecto guardado). */
+  reemplazarBloques(bloques: Block[]): void;
 }
 
 export function useBlocks(): BlocksActions {
@@ -44,5 +46,14 @@ export function useBlocks(): BlocksActions {
     setBloques((prev) => prev.filter((b) => b.id !== id));
   }, []);
 
-  return { bloques, bloquesDePista, crearBloque, actualizarBloque, eliminarBloque };
+  const reemplazarBloques = useCallback((nuevos: Block[]) => setBloques(nuevos), []);
+
+  return {
+    bloques,
+    bloquesDePista,
+    crearBloque,
+    actualizarBloque,
+    eliminarBloque,
+    reemplazarBloques,
+  };
 }

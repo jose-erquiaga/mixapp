@@ -15,6 +15,8 @@ export interface MixCanvasActions {
   quitarEnIndice(index: number): void;
   moverBloque(index: number, direccion: -1 | 1): void;
   cambiarTransicion(index: number, transicion: Transition): void;
+  /** Reemplaza la secuencia completa (al cargar un proyecto guardado). */
+  reemplazarSecuencia(secuencia: SequencedBlock[]): void;
 }
 
 export function useMixCanvas(): MixCanvasActions {
@@ -44,5 +46,14 @@ export function useMixCanvas(): MixCanvasActions {
     );
   }, []);
 
-  return { secuencia, anadirBloque, quitarEnIndice, moverBloque, cambiarTransicion };
+  const reemplazarSecuencia = useCallback((nueva: SequencedBlock[]) => setSecuencia(nueva), []);
+
+  return {
+    secuencia,
+    anadirBloque,
+    quitarEnIndice,
+    moverBloque,
+    cambiarTransicion,
+    reemplazarSecuencia,
+  };
 }

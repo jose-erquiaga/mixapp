@@ -8,6 +8,8 @@ import { MixCanvasPanel } from '@/features/mix-canvas/MixCanvasPanel';
 import { useMixCanvas } from '@/features/mix-canvas/useMixCanvas';
 import { PlaybackBar } from '@/features/playback/PlaybackBar';
 import { usePlayback } from '@/features/playback/usePlayback';
+import { PersistencePanel } from '@/features/persistence/PersistencePanel';
+import { usePersistence } from '@/features/persistence/usePersistence';
 import './App.css';
 
 /**
@@ -22,6 +24,15 @@ function AppContent() {
   const blocks = useBlocks();
   const canvas = useMixCanvas();
   const playback = usePlayback(canvas.secuencia, library.pistas);
+  const persistence = usePersistence({
+    pistas: library.pistas,
+    bloques: blocks.bloques,
+    secuencia: canvas.secuencia,
+    plan: playback.plan,
+    reemplazarPistas: library.reemplazarPistas,
+    reemplazarBloques: blocks.reemplazarBloques,
+    reemplazarSecuencia: canvas.reemplazarSecuencia,
+  });
   const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
 
   // Derivar la pista activa de la lista para que los cambios (p. ej. BPM) se reflejen.
@@ -33,6 +44,16 @@ function AppContent() {
       <header className="app__header">
         <h1>MIXAPP</h1>
         <p className="app__tagline">Arma tu mezcla por bloques, en tu navegador.</p>
+        <PersistencePanel
+          ocupado={persistence.ocupado}
+          estado={persistence.estado}
+          hayGuardado={persistence.hayGuardado}
+          puedeGuardar={library.pistas.length > 0}
+          puedeExportar={canvas.secuencia.length > 0}
+          onGuardar={persistence.guardar}
+          onCargar={persistence.cargar}
+          onExportar={persistence.exportarWav}
+        />
       </header>
 
       <main className="app__layout">

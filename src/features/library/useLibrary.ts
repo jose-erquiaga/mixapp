@@ -20,6 +20,8 @@ export interface LibraryActions {
   actualizarBpm(trackId: string, bpm: number): void;
   eliminarPista(trackId: string): void;
   limpiarError(): void;
+  /** Reemplaza la lista de pistas (al cargar un proyecto guardado). */
+  reemplazarPistas(pistas: Track[]): void;
 }
 
 export function useLibrary(): LibraryState & LibraryActions {
@@ -89,6 +91,8 @@ export function useLibrary(): LibraryState & LibraryActions {
 
   const limpiarError = useCallback(() => setError(null), []);
 
+  const reemplazarPistas = useCallback((nuevas: Track[]) => setPistas(nuevas), []);
+
   return {
     pistas,
     importando,
@@ -97,5 +101,6 @@ export function useLibrary(): LibraryState & LibraryActions {
     actualizarBpm,
     eliminarPista,
     limpiarError,
+    reemplazarPistas,
   };
 }

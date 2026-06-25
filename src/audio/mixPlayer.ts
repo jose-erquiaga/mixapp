@@ -126,6 +126,82 @@ function curvaFadeOut(n = 64): Float32Array {
   return c;
 }
 
+/**
+ * Programa las fuentes del plan sobre un contexto (real u offline) conectándolas
+ * a `destino`. Es el motor común de la reproducción en vivo (`MixPlayer.play`) y
+ * del render offline (`renderMixToBuffer`), para que ambos suenen idéntico.
+ *
+ * @param desdeSeg posición de la mezcla desde la que empezar (0 = principio).
+ * @param ahora    instante del contexto que mapea a `desdeSeg` (en vivo se deja
+ *                 un colchón; offline es 0).
+ */
+export function programarPlan(
+  ctx: BaseAudioContext,
+  plan: PlanMezcla,
+  destino: AudioNode,
+  desdeSeg: number,
+  ahora: number,
+): AudioBufferSourceNode[] {
+  const fadeIn = curvaFadeIn();
+  const fadeOut = curvaFadeOut();
+  const sources: AudioBufferSourceNode[] = [];
+
+  for (const it of plan.items) {
+    const finItem = it.inicioMezcla + it.efectivaSeg;
+    if (finItem <= desdeSeg) continue; // ya pasó
+
+    const parcial = desdeSeg > it.inicioMezcla;
+    const elapsedMezcla = parcial ? desdeSeg - it.inicioMezcla : 0;
+    const elapsedOrigen = elapsedMezcla * it.rate;
+    const cuando = ahora + Math.max(0, it.inicioMezcla - desdeSeg);
+    const offset = it.offsetSeg + elapsedOrigen;
+    const duracionOrigen = Math.max(0, it.origenSeg - elapsedOrigen);
+
+    const g = ctx.createGain();
+    g.connect(destino);
+
+    const tIni = cuando;
+    const tFin = cuando + (it.efectivaSeg - elapsedMezcla);
+
+    if (parcial) {
+      g.gain.setValueAtTime(1, tIni); // al saltar a mitad, sin fade-in
+    } else {
+      g.gain.setValueAtTime(0, tIni);
+      g.gain.setValueCurveAtTime(fadeIn, tIni, Math.min(it.fadeInSeg, it.efectivaSeg / 2));
+    }
+    const fadeOutDur = Math.min(it.fadeOutSeg, it.efectivaSeg / 2);
+    g.gain.setValueCurveAtTime(fadeOut, tFin - fadeOutDur, fadeOutDur);
+
+    const src = ctx.createBufferSource();
+    src.buffer = it.buffer;
+    src.playbackRate.value = it.rate;
+    src.connect(g);
+    src.start(tIni, offset, duracionOrigen);
+    sources.push(src);
+  }
+
+  return sources;
+}
+
+/**
+ * Renderiza la mezcla completa de forma offline (tarea 6.2). Devuelve el
+ * AudioBuffer resultante, o `null` si la secuencia está vacía.
+ */
+export async function renderMixToBuffer(plan: PlanMezcla): Promise<AudioBuffer | null> {
+  if (plan.items.length === 0 || plan.totalSeg <= 0) return null;
+
+  const sampleRate = plan.items[0].buffer.sampleRate;
+  let canales = 1;
+  for (const it of plan.items) canales = Math.max(canales, it.buffer.numberOfChannels);
+
+  // +0.05 s de cola para no recortar el último fade-out.
+  const length = Math.max(1, Math.ceil((plan.totalSeg + 0.05) * sampleRate));
+  const offline = new OfflineAudioContext(canales, length, sampleRate);
+
+  programarPlan(offline, plan, offline.destination, 0, 0);
+  return offline.startRendering();
+}
+
 export interface MixPlayerCallbacks {
   onProgress?: (posSeg: number, totalSeg: number) => void;
   onEnded?: () => void;
@@ -164,42 +240,7 @@ export class MixPlayer {
     const ahora = ctx.currentTime + 0.05; // pequeño colchón
     this.startClock = ahora - desdeSeg;
 
-    const fadeIn = curvaFadeIn();
-    const fadeOut = curvaFadeOut();
-
-    for (const it of this.plan.items) {
-      const finItem = it.inicioMezcla + it.efectivaSeg;
-      if (finItem <= desdeSeg) continue; // ya pasó
-
-      const parcial = desdeSeg > it.inicioMezcla;
-      const elapsedMezcla = parcial ? desdeSeg - it.inicioMezcla : 0;
-      const elapsedOrigen = elapsedMezcla * it.rate;
-      const cuando = ahora + Math.max(0, it.inicioMezcla - desdeSeg);
-      const offset = it.offsetSeg + elapsedOrigen;
-      const duracionOrigen = Math.max(0, it.origenSeg - elapsedOrigen);
-
-      const g = ctx.createGain();
-      g.connect(this.master);
-
-      const tIni = cuando;
-      const tFin = cuando + (it.efectivaSeg - elapsedMezcla);
-
-      if (parcial) {
-        g.gain.setValueAtTime(1, tIni); // al saltar a mitad, sin fade-in
-      } else {
-        g.gain.setValueAtTime(0, tIni);
-        g.gain.setValueCurveAtTime(fadeIn, tIni, Math.min(it.fadeInSeg, it.efectivaSeg / 2));
-      }
-      const fadeOutDur = Math.min(it.fadeOutSeg, it.efectivaSeg / 2);
-      g.gain.setValueCurveAtTime(fadeOut, tFin - fadeOutDur, fadeOutDur);
-
-      const src = ctx.createBufferSource();
-      src.buffer = it.buffer;
-      src.playbackRate.value = it.rate;
-      src.connect(g);
-      src.start(tIni, offset, duracionOrigen);
-      this.sources.push(src);
-    }
+    this.sources = programarPlan(ctx, this.plan, this.master, desdeSeg, ahora);
 
     this.reproduciendo = true;
     this.tick();
