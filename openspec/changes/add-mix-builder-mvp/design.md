@@ -23,6 +23,13 @@ manual con imán al beat es la base fiable; la IA de secciones se pospone a Fase
   sobre un `AudioBuffer` decodificado de un archivo importado.
 - **Reproducción** programada con `AudioBufferSourceNode` + `start(when, offset,
   duration)` para empalmes sample-accurate; crossfades con `GainNode` y rampas.
+- **Almacén de audio (`trackStore`)**: se indexa por `fileRef` (referencia
+  persistible, futura clave de IndexedDB), NO por `trackId`. `Track.id` y
+  `Track.fileRef` son UUIDs distintos. Cualquier consumidor que parta de un
+  `Block` (que solo guarda `trackId`) debe resolver `trackId → fileRef` antes de
+  pedir el buffer; el plan de reproducción lo hace con el resolver
+  `fileRefDePista` que recibe `construirPlan`. (Un cruce `trackId`/`fileRef` dejó
+  la mezcla en silencio; ver fix de reproducción.)
 - **Ajuste de BPM**: SoundTouchJS sobre el buffer del bloque; saltos grandes
   degradan la calidad — avisar en UI, no impedir.
 - **Exportación**: re-render de toda la secuencia en `OfflineAudioContext` →
