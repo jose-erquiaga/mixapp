@@ -23,9 +23,16 @@ export interface LibraryActions {
   limpiarError(): void;
   /** Reemplaza la lista de pistas (al cargar un proyecto guardado). */
   reemplazarPistas(pistas: Track[]): void;
+  /** Añade una pista (al cargar desde la biblioteca local). */
+  anadirPista(pista: Track): void;
 }
 
-export function useLibrary(): LibraryState & LibraryActions {
+export interface LibraryOpts {
+  /** Se llama con el id (hash) de cada pista recién importada. */
+  onImportado?: (id: string) => void;
+}
+
+export function useLibrary(opts?: LibraryOpts): LibraryState & LibraryActions {
   const [pistas, setPistas] = useState<Track[]>([]);
   const [importando, setImportando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +42,11 @@ export function useLibrary(): LibraryState & LibraryActions {
   useEffect(() => {
     pistasRef.current = pistas;
   }, [pistas]);
+
+  const onImportadoRef = useRef(opts?.onImportado);
+  useEffect(() => {
+    onImportadoRef.current = opts?.onImportado;
+  }, [opts?.onImportado]);
 
   const importarArchivos = useCallback(
     async (files: File[]) => {
@@ -79,6 +91,7 @@ export function useLibrary(): LibraryState & LibraryActions {
           putTrackAudio(id, file, buffer);
 
           setPistas((prev) => [...prev, pista]);
+          onImportadoRef.current?.(id);
         } catch (err) {
           if (err instanceof FormatoNoSoportadoError) {
             setError(`${file.name}: ${err.message}`);
@@ -113,6 +126,11 @@ export function useLibrary(): LibraryState & LibraryActions {
 
   const reemplazarPistas = useCallback((nuevas: Track[]) => setPistas(nuevas), []);
 
+  const anadirPista = useCallback(
+    (pista: Track) => setPistas((prev) => (prev.some((p) => p.id === pista.id) ? prev : [...prev, pista])),
+    [],
+  );
+
   return {
     pistas,
     importando,
@@ -122,5 +140,6 @@ export function useLibrary(): LibraryState & LibraryActions {
     eliminarPista,
     limpiarError,
     reemplazarPistas,
+    anadirPista,
   };
 }

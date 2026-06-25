@@ -34,14 +34,19 @@
   estado de bloques.
 - **Re-importar desde disco**: si el hash del archivo ya está en el catálogo, se
   adjuntan automáticamente sus bloques guardados (mismo efecto, vía disco).
+  Implementado con `onImportado` callback en `useLibrary` que consulta
+  `obtenerCancion` y llama a `mergeBloques`.
 - El merge respeta los bloques ya presentes en memoria (no duplica por id).
+  `useBlocks.mergeBloques` filtra por `Block.id` antes de añadir.
 
 ## UI (móvil-first)
-- Botón "📚 Biblioteca" en la cabecera abre una hoja/vista a pantalla completa
-  con las canciones guardadas: nombre, BPM, duración y nº de bloques.
+- Botón "📚 Guardar en biblioteca" y "📖 Biblioteca" en la cabecera.
+- Modal a pantalla completa (`LocalLibraryModal`) con lista de canciones
+  guardadas: nombre, BPM, duración y nº de bloques.
 - Cada fila ofrece "Cargar" (trae canción + bloques al workspace) y "Eliminar de
   biblioteca".
-- Botón "Guardar en biblioteca" junto a las acciones de proyecto.
+- `useLibrary.anadirPista` y `useBlocks.mergeBloques` añadidos para cargar
+  desde la biblioteca sin reemplazar el workspace.
 
 ## Relación con la persistencia de proyecto (#6)
 - El catálogo de canciones+bloques es la fuente persistente de audio y bloques.

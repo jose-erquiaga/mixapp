@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AudioContextProvider } from '@/audio/AudioContextProvider';
 import { LibraryPanel } from '@/features/library/LibraryPanel';
 import { useLibrary } from '@/features/library/useLibrary';
@@ -11,18 +11,30 @@ import { usePlayback } from '@/features/playback/usePlayback';
 import { PersistencePanel } from '@/features/persistence/PersistencePanel';
 import { usePersistence } from '@/features/persistence/usePersistence';
 import { useLocalLibrary } from '@/features/local-library/useLocalLibrary';
+import { LocalLibraryModal } from '@/features/local-library/LocalLibraryModal';
+import { obtenerCancion } from '@/features/local-library/libraryStore';
 import './App.css';
 
-/**
- * Layout raíz de MIXAPP. Orquesta el estado compartido (biblioteca y bloques)
- * y lo reparte entre las capabilities del MVP:
- *  - Biblioteca (library): importar pistas
- *  - Editor de pista (waveform-editor): marcar bloques
- *  - Lienzo de mezcla + reproducción (mix-canvas / playback): pendiente
- */
 function AppContent() {
-  const library = useLibrary();
   const blocks = useBlocks();
+
+  // Re-vinculación de bloques al re-importar (#12): si el hash del archivo ya
+  // está en el catálogo, mergeamos sus bloques guardados automáticamente.
+  const onImportado = useCallback(
+    async (id: string) => {
+      try {
+        const cancion = await obtenerCancion(id);
+        if (cancion && cancion.bloques.length > 0) {
+          blocks.mergeBloques(cancion.bloques);
+        }
+      } catch {
+        // silencioso: re-vincular es best-effort
+      }
+    },
+    [blocks.mergeBloques],
+  );
+
+  const library = useLibrary({ onImportado });
   const canvas = useMixCanvas();
   const playback = usePlayback(canvas.secuencia, library.pistas);
   const persistence = usePersistence({
@@ -37,10 +49,11 @@ function AppContent() {
   const localLib = useLocalLibrary({
     pistas: library.pistas,
     bloques: blocks.bloques,
+    onAnadirPista: library.anadirPista,
+    onMergeBloques: blocks.mergeBloques,
   });
   const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
 
-  // Derivar la pista activa de la lista para que los cambios (p. ej. BPM) se reflejen.
   const pistaActiva = library.pistas.find((p) => p.id === trackSeleccionadoId) ?? null;
   const bloquesActivos = pistaActiva ? blocks.bloquesDePista(pistaActiva.id) : [];
 
@@ -62,6 +75,7 @@ function AppContent() {
           bibliotecaEstado={localLib.estado}
           puedeGuardarBiblioteca={library.pistas.length > 0}
           onGuardarBiblioteca={localLib.guardarEnBiblioteca}
+          onAbrirBiblioteca={localLib.abrirModal}
           hayBiblioteca={localLib.hayBiblioteca}
         />
       </header>
@@ -123,6 +137,14 @@ function AppContent() {
           />
         </section>
       </main>
+
+      <LocalLibraryModal
+        abierto={localLib.modalAbierto}
+        ocupado={localLib.ocupado}
+        onCerrar={localLib.cerrarModal}
+        onCargar={localLib.cargarDesdeBiblioteca}
+        onEliminar={localLib.eliminarDeBiblioteca}
+      />
     </div>
   );
 }

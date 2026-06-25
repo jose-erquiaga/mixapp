@@ -1,0 +1,133 @@
+.biblio-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.biblio-modal__contenido {
+  width: 100%;
+  max-width: 600px;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.biblio-modal__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #333;
+}
+
+.biblio-modal__cabecera h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.biblio-modal__cerrar {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.biblio-modal__cerrar:hover {
+  color: white;
+}
+
+.biblio-modal__vacio {
+  padding: 2rem 1.25rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.biblio-modal__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.biblio-modal__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #2a2a2a;
+  gap: 0.75rem;
+}
+
+.biblio-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.biblio-modal__nombre {
+  color: white;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.biblio-modal__meta {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+.biblio-modal__acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.biblio-modal__btn {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.biblio-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.biblio-modal__btn--cargar {
+  background: #646cff;
+  color: white;
+}
+
+.biblio-modal__btn--cargar:hover:not(:disabled) {
+  background: #535bf2;
+}
+
+.biblio-modal__btn--eliminar {
+  background: #3a2020;
+  color: #ff6b6b;
+}
+
+.biblio-modal__btn--eliminar:hover:not(:disabled) {
+  background: #4a2020;
+}
+
+@media (max-width: 768px) {
+  .biblio-modal__contenido {
+    max-width: 100%;
+  }
+}

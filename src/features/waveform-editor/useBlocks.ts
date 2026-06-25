@@ -22,6 +22,8 @@ export interface BlocksActions {
   eliminarBloque(id: string): void;
   /** Reemplaza todos los bloques (al cargar un proyecto guardado). */
   reemplazarBloques(bloques: Block[]): void;
+  /** Añade bloques que no existan ya (al cargar desde la biblioteca). */
+  mergeBloques(nuevos: Block[]): void;
 }
 
 export function useBlocks(): BlocksActions {
@@ -48,6 +50,14 @@ export function useBlocks(): BlocksActions {
 
   const reemplazarBloques = useCallback((nuevos: Block[]) => setBloques(nuevos), []);
 
+  const mergeBloques = useCallback((nuevos: Block[]) => {
+    setBloques((prev) => {
+      const ids = new Set(prev.map((b) => b.id));
+      const unicos = nuevos.filter((b) => !ids.has(b.id));
+      return unicos.length > 0 ? [...prev, ...unicos] : prev;
+    });
+  }, []);
+
   return {
     bloques,
     bloquesDePista,
@@ -55,5 +65,6 @@ export function useBlocks(): BlocksActions {
     actualizarBloque,
     eliminarBloque,
     reemplazarBloques,
+    mergeBloques,
   };
 }
