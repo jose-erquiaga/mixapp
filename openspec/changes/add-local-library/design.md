@@ -49,9 +49,12 @@
   desde la biblioteca sin reemplazar el workspace.
 - **Bloques en la tarjeta de la pista**: cada tarjeta de "Pistas" muestra una
   fila de chips con `bloquesDePista(track.id)` (`TrackList`). Tocar un chip
-  llama a `anadirBloque` (mismo handler que el panel "Bloques disponibles" del
-  lienzo) y añade el bloque a la secuencia. Solo toque, sin arrastrar
-  (móvil-first); el panel del lienzo se mantiene en paralelo.
+  llama a `anadirBloque` y añade el bloque a la secuencia. Solo toque, sin
+  arrastrar (móvil-first).
+- **Añadir a la secuencia se hace solo desde la biblioteca**: la tarjeta de cada
+  pista es el único punto para añadir bloques/pista entera. El antiguo panel
+  "Bloques disponibles" del lienzo se eliminó por redundante; `MixCanvasPanel`
+  ya solo muestra la secuencia y las transiciones.
 - **Pista entera**: la misma fila incluye un botón "＋ Pista entera" que crea un
   `Block` sintético que cubre `0 … duracionSeg` (id `pista-<trackId>`, color de
   la pista) y lo añade con `anadirBloque`. No se persiste en el almacén de

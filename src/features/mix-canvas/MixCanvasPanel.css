@@ -18,42 +18,6 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* Paleta */
-.mix-canvas__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.mix-canvas__chip-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.75rem;
-  min-height: 44px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #555;
-  border-left-width: 3px;
-  border-radius: 6px;
-  color: white;
-  font-size: 0.9rem;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.mix-canvas__chip-add:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.mix-canvas__chip-add small {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.mix-canvas__plus {
-  font-size: 1.1rem;
-  color: #4a9eff;
-}
-
 .mix-canvas__dot {
   width: 10px;
   height: 10px;

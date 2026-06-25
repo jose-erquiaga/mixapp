@@ -129,10 +129,8 @@ function AppContent() {
             onSaltar={playback.saltarABloque}
           />
           <MixCanvasPanel
-            bloquesDisponibles={blocks.bloques}
             tracks={library.pistas}
             secuencia={canvas.secuencia}
-            onAnadir={canvas.anadirBloque}
             onQuitar={canvas.quitarEnIndice}
             onMover={canvas.moverBloque}
             onCambiarTransicion={canvas.cambiarTransicion}
