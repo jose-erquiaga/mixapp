@@ -1,9 +1,9 @@
 # Tasks
 
 ## 1. Identidad de canción por contenido
-- [ ] 1.1 `hashArchivo(file)` con SHA-256 (`crypto.subtle.digest`)
-- [ ] 1.2 Usar el hash como `Track.id` y `Track.fileRef` (unificados)
-- [ ] 1.3 Dedupe al importar (mismo hash → reutilizar, no duplicar)
+- [x] 1.1 `hashArchivo(file)` con SHA-256 (Web Crypto + fallback JS para http/LAN)
+- [x] 1.2 Usar el hash como `Track.id` y `Track.fileRef` (unificados)
+- [x] 1.3 Dedupe al importar (mismo hash → reutilizar, no duplicar)
 
 ## 2. Catálogo en IndexedDB (guardado manual)
 - [ ] 2.1 Almacén `canciones` (audio + metadatos + bloques) indexado por hash

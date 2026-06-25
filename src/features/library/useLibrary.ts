@@ -3,10 +3,11 @@
  * Maneja importación, decodificación, estimación de BPM y edición manual.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Track } from '@/types/model';
 import { decodificarArchivo, FormatoNoSoportadoError } from '@/audio/decode';
 import { estimarBpm } from '@/audio/bpm';
+import { hashArchivo } from '@/audio/hash';
 import { putTrackAudio, removeTrackAudio } from '@/audio/trackStore';
 
 export interface LibraryState {
@@ -29,13 +30,32 @@ export function useLibrary(): LibraryState & LibraryActions {
   const [importando, setImportando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Espejo de `pistas` para deduplicar entre llamadas sin re-crear el callback.
+  const pistasRef = useRef(pistas);
+  useEffect(() => {
+    pistasRef.current = pistas;
+  }, [pistas]);
+
   const importarArchivos = useCallback(
     async (files: File[]) => {
       setImportando(true);
       setError(null);
 
+      // Ids ya vistos en este lote (las pistas añadidas aún no están en el ref).
+      const vistos = new Set<string>();
+
       for (const file of files) {
         try {
+          // Identidad estable por contenido (issue #9): el hash es id y fileRef.
+          const id = await hashArchivo(file);
+
+          // Dedupe: misma canción ya importada → no duplicar.
+          if (vistos.has(id) || pistasRef.current.some((p) => p.id === id)) {
+            vistos.add(id);
+            continue;
+          }
+          vistos.add(id);
+
           // Decodificar el audio
           const buffer = await decodificarArchivo(file);
           const duracionSeg = buffer.duration;
@@ -44,19 +64,19 @@ export function useLibrary(): LibraryState & LibraryActions {
           // Estimar BPM (puede devolver null si falla)
           const bpm = (await estimarBpm(buffer)) ?? 120;
 
-          // Crear pista
-          const fileRef = crypto.randomUUID();
+          // id === fileRef === hash: unifica la identidad y evita el cruce
+          // trackId/fileRef que dejó la mezcla en silencio en el MVP.
           const pista: Track = {
-            id: crypto.randomUUID(),
+            id,
             nombre: file.name.replace(/\.[^/.]+$/, ''), // quitar extensión
-            fileRef,
+            fileRef: id,
             sampleRate,
             duracionSeg,
             bpm,
           };
 
           // Guardar audio (File + AudioBuffer) en el almacén compartido.
-          putTrackAudio(fileRef, file, buffer);
+          putTrackAudio(id, file, buffer);
 
           setPistas((prev) => [...prev, pista]);
         } catch (err) {

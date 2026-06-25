@@ -12,6 +12,11 @@
   duplica; se reutiliza la entrada y se adjuntan sus bloques guardados.
 - Coste: el hash de un archivo de pocos MB es de unos milisegundos; se hace una
   sola vez al importar.
+- **Contexto inseguro (móvil por LAN/http)**: `crypto.subtle` solo existe en
+  contexto seguro (https/localhost). Como en el móvil se accede por LAN sobre
+  http, `hashArchivo` usa Web Crypto cuando está disponible y, si no, una
+  implementación SHA-256 en JS puro que da el MISMO hash (ver `audio/hash.ts`),
+  para que la identidad sea idéntica en cualquier dispositivo/contexto.
 
 ## Catálogo en IndexedDB (guardado manual)
 - Almacén `canciones`, indexado por songId(hash). Registro:
