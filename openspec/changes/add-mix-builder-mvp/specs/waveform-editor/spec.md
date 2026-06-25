@@ -58,6 +58,13 @@ permitiendo al usuario marcar inicio y fin escuchando el audio.
 - **WHEN** el usuario pulsa 🔁 Loop selección
 - **THEN** la reproducción comienza desde el inicio de la región marcada
 - **AND** cuando alcanza el fin de la región, reinicia automáticamente desde el inicio
+- **AND** el bucle se repite SIN cortes ni micro-silencios entre repeticiones
+  (loop nativo de Web Audio, preciso a nivel de muestra)
+
+#### Scenario: Ajustar la región mientras el loop suena
+- **GIVEN** el loop de la selección sonando
+- **WHEN** el usuario cambia inicio o fin (flechas, "marcar aquí" o arrastre)
+- **THEN** el bucle adopta los nuevos límites sin detener el sonido
 
 #### Scenario: Marcar inicio escuchando (por oído)
 - **GIVEN** la pista en reproducción

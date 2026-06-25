@@ -30,6 +30,14 @@ manual con imán al beat es la base fiable; la IA de secciones se pospone a Fase
   pedir el buffer; el plan de reproducción lo hace con el resolver
   `fileRefDePista` que recibe `construirPlan`. (Un cruce `trackId`/`fileRef` dejó
   la mezcla en silencio; ver fix de reproducción.)
+- **Loop sin cortes en el editor**: el bucle de la selección (🔁 Loop) usa el
+  loop NATIVO de `AudioBufferSourceNode` (`loop` + `loopStart`/`loopEnd`), que
+  repite con precisión de muestra. Reiniciar la posición a mano vía wavesurfer
+  (`setTime` al detectar el fin en `timeupdate`) dejaba un micro-silencio en cada
+  vuelta, porque `timeupdate` no es exacto. El cabezal visual se anima aparte con
+  `requestAnimationFrame` leyendo el reloj del AudioContext (ver `preview.ts`,
+  `previsualizarRegion({ loop: true })`). Esto es la base del "dejar loops" de
+  Fase 2.
 - **Ajuste de BPM**: SoundTouchJS sobre el buffer del bloque; saltos grandes
   degradan la calidad — avisar en UI, no impedir.
 - **Exportación**: re-render de toda la secuencia en `OfflineAudioContext` →

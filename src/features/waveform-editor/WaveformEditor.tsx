@@ -11,7 +11,8 @@ import { useEffect, useRef, useState } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin, { type Region } from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { Track, Block } from '@/types/model';
-import { getTrackObjectUrl } from '@/audio/trackStore';
+import { getTrackObjectUrl, getTrackBuffer } from '@/audio/trackStore';
+import { previsualizarRegion, type PreviewHandle } from '@/audio/preview';
 import { tiemposBeats, imantarAlBeat, intervaloBeatSeg } from '@/audio/beats';
 import './WaveformEditor.css';
 
@@ -31,8 +32,10 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
   const imanRef = useRef(true);
   // Marca de cambio programático (nudge/marcar): evita que el imán lo pise.
   const programaticoRef = useRef(false);
-  // Estado de reproducción de la selección en loop.
-  const loopSelRef = useRef(false);
+  // Loop de la selección: se reproduce con Web Audio nativo (sample-accurate,
+  // sin el micro-silencio que dejaba el re-seek de wavesurfer).
+  const loopHandleRef = useRef<PreviewHandle | null>(null);
+  const rafLoopRef = useRef(0);
 
   const [iman, setIman] = useState(true);
   const [listo, setListo] = useState(false);
@@ -45,9 +48,11 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
   useEffect(() => {
     imanRef.current = iman;
   }, [iman]);
+  // Mantener los límites del loop en vivo cuando se ajusta la selección
+  // (flechas, marcar por oído o arrastre): sin cortar el sonido.
   useEffect(() => {
-    loopSelRef.current = loopSel;
-  }, [loopSel]);
+    if (seleccion) loopHandleRef.current?.actualizarRegion(seleccion.inicio, seleccion.fin);
+  }, [seleccion]);
 
   // Aplica una nueva selección de forma programática (sin que el imán la pise).
   const aplicarSeleccion = (inicio: number, fin: number) => {
@@ -69,6 +74,7 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
     setListo(false);
     setSeleccion(null);
     setReproduciendo(false);
+    setLoopSel(false);
     setCabezalSeg(0);
 
     const regions = RegionsPlugin.create();
@@ -122,19 +128,17 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
       setSeleccion({ inicio: region.start, fin: region.end });
     });
 
-    // Cabezal + control de límites del loop de selección.
-    ws.on('timeupdate', (t: number) => {
-      setCabezalSeg(t);
-      const region = seleccionRef.current;
-      if (loopSelRef.current && region && t >= region.end - 0.01) {
-        ws.setTime(region.start);
-      }
-    });
+    // Cabezal durante la reproducción de la pista con wavesurfer.
+    ws.on('timeupdate', (t: number) => setCabezalSeg(t));
     ws.on('play', () => setReproduciendo(true));
     ws.on('pause', () => setReproduciendo(false));
     ws.on('finish', () => setReproduciendo(false));
 
     return () => {
+      // Parar el loop de Web Audio si estaba sonando.
+      loopHandleRef.current?.stop();
+      loopHandleRef.current = null;
+      cancelAnimationFrame(rafLoopRef.current);
       ws.destroy();
       wsRef.current = null;
       seleccionRef.current = null;
@@ -170,21 +174,48 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
   };
 
   // Transporte.
+  const pararLoop = () => {
+    loopHandleRef.current?.stop();
+    loopHandleRef.current = null;
+    cancelAnimationFrame(rafLoopRef.current);
+    setLoopSel(false);
+  };
+
   const playPausaPista = () => {
     const ws = wsRef.current;
     if (!ws) return;
-    setLoopSel(false);
-    loopSelRef.current = false;
+    if (loopHandleRef.current) pararLoop(); // no sonar pista y loop a la vez
     ws.playPause();
   };
-  const reproducirSeleccion = () => {
+
+  // Loop sample-accurate de la selección con Web Audio (sin micro-silencio).
+  // Vuelve a pulsar para detenerlo.
+  const reproducirSeleccion = async () => {
     const ws = wsRef.current;
     const region = seleccionRef.current;
     if (!ws || !region) return;
+    if (loopHandleRef.current) {
+      pararLoop();
+      return;
+    }
+    ws.pause(); // que no suene la pista a la vez
+    const buffer = getTrackBuffer(track.fileRef);
+    if (!buffer) return;
+    const handle = await previsualizarRegion(buffer, region.start, region.end, undefined, {
+      loop: true,
+    });
+    loopHandleRef.current = handle;
     setLoopSel(true);
-    loopSelRef.current = true;
-    ws.setTime(region.start);
-    ws.play();
+    // Cabezal vivo: lo movemos según el reloj del AudioContext.
+    const animar = () => {
+      const h = loopHandleRef.current;
+      if (!h) return;
+      const pos = h.posicionSeg();
+      setCabezalSeg(pos);
+      wsRef.current?.setTime(pos);
+      rafLoopRef.current = requestAnimationFrame(animar);
+    };
+    rafLoopRef.current = requestAnimationFrame(animar);
   };
 
   const beat = intervaloBeatSeg(track.bpm);
@@ -218,8 +249,13 @@ export function WaveformEditor({ track, bloques, color, onCrearBloque }: Wavefor
         <button onClick={playPausaPista} disabled={!listo} aria-label="Reproducir pista">
           {reproduciendo && !loopSel ? '⏸' : '▶'} Pista
         </button>
-        <button onClick={reproducirSeleccion} disabled={!listo} aria-label="Loop de la selección">
-          🔁 Loop selección
+        <button
+          onClick={reproducirSeleccion}
+          disabled={!listo}
+          aria-label="Loop de la selección"
+          className={loopSel ? 'wf-editor__marcar' : ''}
+        >
+          {loopSel ? '⏹ Parar loop' : '🔁 Loop selección'}
         </button>
         <button className="wf-editor__marcar" onClick={() => marcarAqui('inicio')} disabled={!listo}>
           ⇤ Inicio aquí
