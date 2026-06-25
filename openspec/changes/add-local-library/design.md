@@ -50,9 +50,12 @@
 
 ## Relación con la persistencia de proyecto (#6)
 - El catálogo de canciones+bloques es la fuente persistente de audio y bloques.
-- El "proyecto" pasa a guardar solo la **secuencia** del lienzo, referenciando
-  canciones por songId, sin volver a almacenar los audios. Se ajustarán
-  `projectStore`/`usePersistence` para no duplicar los `File`.
+- Al guardar el proyecto, `usePersistence` omite el `File` de las pistas que ya
+  están en el catálogo de la biblioteca (evita duplicar GBs de audio).
+- Al cargar el proyecto, resuelve cada pista primero desde el almacén del
+  proyecto y luego desde el catálogo de la biblioteca (fallback gracioso).
+- Pistas que no se han guardado en la biblioteca se siguen almacenando en el
+  proyecto como antes (self-contained).
 
 ## Issue absorbida
 - **#7 (bloques huérfanos)**: deja de aplicar. Con bloques ligados a la canción

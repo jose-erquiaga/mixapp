@@ -2,9 +2,9 @@
  * Hook de persistencia y exportación (capability project-persistence).
  *
  * Orquesta:
- *  - Guardar/cargar el proyecto en IndexedDB (6.1), re-decodificando los audios
- *    al cargar para repoblar el trackStore.
- *  - Exportar la mezcla: render offline (6.2) + codificación WAV y descarga (6.3).
+ *  - Guardar/cargar el proyecto en IndexedDB, evitando duplicar audios que ya
+ *    estén en el catálogo de la biblioteca local (#13).
+ *  - Exportar la mezcla: render offline + codificación WAV y descarga.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import {
   hayProyectoGuardado,
   type ProjectSnapshot,
 } from './projectStore';
+import { obtenerCancion } from '@/features/local-library/libraryStore';
 
 const NOMBRE_PROYECTO = 'Mi mezcla';
 
@@ -83,6 +84,11 @@ export function usePersistence(deps: PersistenceDeps): PersistenceState {
     try {
       const archivos: Record<string, File> = {};
       for (const pista of pistas) {
+        // Si la canción ya existe en el catálogo de la biblioteca, no
+        // duplicamos su audio en el proyecto (#13).
+        const enBiblioteca = await obtenerCancion(pista.id).catch(() => undefined);
+        if (enBiblioteca) continue;
+
         const file = getTrackFile(pista.fileRef);
         if (file) archivos[pista.fileRef] = file;
       }
@@ -115,9 +121,13 @@ export function usePersistence(deps: PersistenceDeps): PersistenceState {
         return;
       }
       const { snapshot, archivos } = datos;
-      // Re-decodificar cada audio y repoblar el trackStore.
       for (const track of snapshot.tracks) {
-        const file = archivos[track.fileRef];
+        // Buscar el audio: primero en el proyecto, luego en la biblioteca (#13).
+        let file = archivos[track.fileRef];
+        if (!file) {
+          const cancion = await obtenerCancion(track.id).catch(() => undefined);
+          if (cancion) file = cancion.file;
+        }
         if (!file) continue;
         const buffer = await decodificarArchivo(file);
         putTrackAudio(track.fileRef, file, buffer);

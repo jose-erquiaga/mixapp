@@ -20,5 +20,5 @@
 - [x] 4.2 Al re-importar un archivo ya conocido, adjuntar sus bloques
 
 ## 5. Reajuste de persistencia de proyecto (#6)
-- [ ] 5.1 Proyecto guarda la secuencia por referencia (songId), sin duplicar audios
-- [ ] 5.2 Cargar proyecto resuelve las canciones desde el catálogo
+- [x] 5.1 Proyecto guarda la secuencia por referencia (songId), sin duplicar audios
+- [x] 5.2 Cargar proyecto resuelve las canciones desde el catálogo
