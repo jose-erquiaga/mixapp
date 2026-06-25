@@ -47,6 +47,11 @@
   biblioteca".
 - `useLibrary.anadirPista` y `useBlocks.mergeBloques` añadidos para cargar
   desde la biblioteca sin reemplazar el workspace.
+- **Bloques en la tarjeta de la pista**: cada tarjeta de "Pistas" muestra una
+  fila de chips con `bloquesDePista(track.id)` (`TrackList`). Tocar un chip
+  llama a `anadirBloque` (mismo handler que el panel "Bloques disponibles" del
+  lienzo) y añade el bloque a la secuencia. Solo toque, sin arrastrar
+  (móvil-first); el panel del lienzo se mantiene en paralelo.
 
 ## Relación con la persistencia de proyecto (#6)
 - El catálogo de canciones+bloques es la fuente persistente de audio y bloques.

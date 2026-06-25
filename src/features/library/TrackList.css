@@ -12,8 +12,9 @@
 
 .track-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid #333;
@@ -25,6 +26,12 @@
 .track-item:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: #555;
+}
+
+.track-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .track-item__info {
@@ -101,9 +108,52 @@
   background: rgba(255, 107, 107, 0.1);
 }
 
+/* Fila de bloques de la pista (chips para añadir a la secuencia). */
+.track-item__bloques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.track-item__bloque-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.3rem 0.5rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid #555;
+  border-left-width: 3px;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.track-item__bloque-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.track-item__bloque-chip small {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.track-item__bloque-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.track-item__bloque-plus {
+  color: #4a9eff;
+  font-weight: bold;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-  .track-item {
+  .track-item__top {
     flex-direction: column;
     align-items: flex-start;
   }

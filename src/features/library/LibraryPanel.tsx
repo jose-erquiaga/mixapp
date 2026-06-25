@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from 'react';
-import { Track } from '@/types/model';
+import { Track, Block } from '@/types/model';
 import { DropZone } from './DropZone';
 import { TrackList } from './TrackList';
 import './LibraryPanel.css';
@@ -19,6 +19,10 @@ export interface LibraryPanelProps {
   onLimpiarError: () => void;
   onSelectTrack?: (track: Track) => void;
   trackSeleccionadoId?: string;
+  /** Bloques marcados de una pista, para mostrarlos en su tarjeta. */
+  bloquesDePista?: (trackId: string) => Block[];
+  /** Añade un bloque a la secuencia del lienzo. */
+  onAnadirBloque?: (block: Block) => void;
 }
 
 export function LibraryPanel({
@@ -30,6 +34,8 @@ export function LibraryPanel({
   onEliminar,
   onLimpiarError,
   onSelectTrack,
+  bloquesDePista,
+  onAnadirBloque,
 }: LibraryPanelProps) {
   useEffect(() => {
     if (error) {
@@ -60,6 +66,8 @@ export function LibraryPanel({
           onBpmChange={onBpmChange}
           onDelete={onEliminar}
           onSelect={onSelectTrack}
+          bloquesDePista={bloquesDePista}
+          onAnadirBloque={onAnadirBloque}
         />
       </div>
     </div>

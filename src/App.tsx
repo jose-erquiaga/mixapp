@@ -96,6 +96,8 @@ function AppContent() {
             onLimpiarError={library.limpiarError}
             onSelectTrack={(t) => setTrackSeleccionadoId(t.id)}
             trackSeleccionadoId={trackSeleccionadoId ?? undefined}
+            bloquesDePista={blocks.bloquesDePista}
+            onAnadirBloque={canvas.anadirBloque}
           />
         </section>
 

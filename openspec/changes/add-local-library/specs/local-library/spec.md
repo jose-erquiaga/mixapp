@@ -60,3 +60,8 @@ al cargar (o re-importar) esa canción sus bloques vuelvan a estar disponibles.
 - **GIVEN** una canción conocida con bloques guardados
 - **WHEN** el usuario re-importa su archivo desde el disco
 - **THEN** sus bloques guardados se adjuntan automáticamente
+
+#### Scenario: Ver y usar los bloques desde la tarjeta de la canción
+- **GIVEN** una pista en la biblioteca con bloques disponibles
+- **THEN** sus bloques se muestran como chips dentro de la tarjeta de esa pista
+- **AND** al tocar un chip el bloque se añade a la secuencia del lienzo
