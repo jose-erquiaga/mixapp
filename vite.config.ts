@@ -4,7 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // En producción se sirve bajo la subruta de GitHub Pages
+  // (https://<usuario>.github.io/mixapp/); en dev, desde la raíz.
+  base: command === 'build' ? '/mixapp/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -61,4 +64,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-});
+}));
