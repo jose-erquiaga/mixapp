@@ -10,6 +10,8 @@ import { PlaybackBar } from '@/features/playback/PlaybackBar';
 import { usePlayback } from '@/features/playback/usePlayback';
 import { PersistencePanel } from '@/features/persistence/PersistencePanel';
 import { usePersistence } from '@/features/persistence/usePersistence';
+import { ProjectNameModal } from '@/features/persistence/ProjectNameModal';
+import { ProjectListModal } from '@/features/persistence/ProjectListModal';
 import { useLocalLibrary } from '@/features/local-library/useLocalLibrary';
 import { LocalLibraryModal } from '@/features/local-library/LocalLibraryModal';
 import { obtenerCancion } from '@/features/local-library/libraryStore';
@@ -18,8 +20,6 @@ import './App.css';
 function AppContent() {
   const blocks = useBlocks();
 
-  // Re-vinculación de bloques al re-importar (#12): si el hash del archivo ya
-  // está en el catálogo, mergeamos sus bloques guardados automáticamente.
   const onImportado = useCallback(
     async (id: string) => {
       try {
@@ -68,6 +68,7 @@ function AppContent() {
           hayGuardado={persistence.hayGuardado}
           puedeGuardar={library.pistas.length > 0}
           puedeExportar={canvas.secuencia.length > 0}
+          nombreProyectoActual={persistence.nombreProyectoActual}
           onGuardar={persistence.guardar}
           onCargar={persistence.cargar}
           onExportar={persistence.exportarWav}
@@ -137,6 +138,21 @@ function AppContent() {
           />
         </section>
       </main>
+
+      <ProjectNameModal
+        abierto={persistence.modalNombre.abierto}
+        onConfirmar={persistence.modalNombre.onConfirmar}
+        onCancelar={persistence.modalNombre.onCancelar}
+      />
+
+      <ProjectListModal
+        abierto={persistence.modalLista.abierto}
+        proyectos={persistence.proyectos}
+        ocupado={persistence.ocupado}
+        onSeleccionar={persistence.modalLista.onSeleccionar}
+        onEliminar={persistence.modalLista.onEliminar}
+        onCerrar={persistence.modalLista.onCerrar}
+      />
 
       <LocalLibraryModal
         abierto={localLib.modalAbierto}

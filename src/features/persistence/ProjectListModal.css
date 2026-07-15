@@ -1,0 +1,127 @@
+.plm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.plm-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.plm-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.plm-titulo {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.plm-cerrar {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  touch-action: manipulation;
+}
+
+.plm-vacio {
+  padding: 2rem 1.25rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.9rem;
+}
+
+.plm-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.plm-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.plm-fila:last-child {
+  border-bottom: none;
+}
+
+.plm-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.plm-nombre {
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plm-meta {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.plm-acciones {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.plm-btn {
+  min-height: 38px;
+  padding: 0 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  border: 1px solid #555;
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+}
+
+.plm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.plm-btn--cargar {
+  border-color: #4a9eff;
+  color: #9ecbff;
+}
+
+.plm-btn--cargar:not(:disabled):hover {
+  background: rgba(74, 158, 255, 0.2);
+}
+
+.plm-btn--eliminar {
+  color: #ff8888;
+}
+
+.plm-btn--eliminar:not(:disabled):hover {
+  background: rgba(255, 80, 80, 0.15);
+}

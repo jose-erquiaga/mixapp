@@ -1,8 +1,3 @@
-/**
- * Barra de proyecto: guardar/cargar en IndexedDB, exportar WAV y guardar en
- * la biblioteca local persistente. Presentacional.
- */
-
 import './PersistencePanel.css';
 
 export interface PersistencePanelProps {
@@ -11,6 +6,7 @@ export interface PersistencePanelProps {
   hayGuardado: boolean;
   puedeGuardar: boolean;
   puedeExportar: boolean;
+  nombreProyectoActual?: string;
   onGuardar: () => void;
   onCargar: () => void;
   onExportar: () => void;
@@ -28,6 +24,7 @@ export function PersistencePanel({
   hayGuardado,
   puedeGuardar,
   puedeExportar,
+  nombreProyectoActual,
   onGuardar,
   onCargar,
   onExportar,
@@ -41,6 +38,9 @@ export function PersistencePanel({
   const todoOcupado = ocupado || !!bibliotecaOcupado;
   return (
     <div className="proyecto-barra">
+      {nombreProyectoActual && (
+        <span className="proyecto-barra__nombre">📌 {nombreProyectoActual}</span>
+      )}
       <div className="proyecto-barra__acciones">
         <button onClick={onGuardar} disabled={todoOcupado || !puedeGuardar}>
           💾 Guardar

@@ -1,0 +1,77 @@
+.pnm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.pnm-dialogo {
+  background: #1e1e2e;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pnm-titulo {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pnm-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.pnm-input:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.pnm-acciones {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.pnm-btn {
+  min-height: 40px;
+  padding: 0 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  border: 1px solid #555;
+}
+
+.pnm-btn--cancel {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pnm-btn--ok {
+  background: #4a9eff;
+  border-color: #4a9eff;
+  color: white;
+  font-weight: 600;
+}
+
+.pnm-btn--ok:hover {
+  background: #6ab0ff;
+}
