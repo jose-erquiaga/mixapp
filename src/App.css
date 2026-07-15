@@ -22,6 +22,22 @@
   font-size: 0.9rem;
 }
 
+.app__instalar {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #4a9eff;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app__instalar:hover {
+  background: #3a8eef;
+}
+
 .app__layout {
   flex: 1;
   display: grid;

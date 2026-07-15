@@ -15,6 +15,7 @@ import { ProjectListModal } from '@/features/persistence/ProjectListModal';
 import { useLocalLibrary } from '@/features/local-library/useLocalLibrary';
 import { LocalLibraryModal } from '@/features/local-library/LocalLibraryModal';
 import { obtenerCancion } from '@/features/local-library/libraryStore';
+import { useInstallPrompt } from '@/features/install/useInstallPrompt';
 import './App.css';
 
 function AppContent() {
@@ -52,6 +53,7 @@ function AppContent() {
     onAnadirPista: library.anadirPista,
     onMergeBloques: blocks.mergeBloques,
   });
+  const install = useInstallPrompt();
   const [trackSeleccionadoId, setTrackSeleccionadoId] = useState<string | null>(null);
 
   const pistaActiva = library.pistas.find((p) => p.id === trackSeleccionadoId) ?? null;
@@ -62,6 +64,11 @@ function AppContent() {
       <header className="app__header">
         <h1>MIXAPP</h1>
         <p className="app__tagline">Arma tu mezcla por bloques, en tu navegador.</p>
+        {install.puedeInstalar && (
+          <button className="app__instalar" onClick={install.instalar}>
+            ⬇ Instalar app
+          </button>
+        )}
         <PersistencePanel
           ocupado={persistence.ocupado}
           estado={persistence.estado}
