@@ -99,11 +99,12 @@ el imán. Esto preserva:
   por ser programático.
 
 ## Persistencia y exportación (implementado)
-- **IndexedDB, un único proyecto "actual"**: el MVP guarda un solo proyecto
-  (slot fijo) en dos almacenes: `proyecto` (snapshot serializable: pistas,
-  bloques, secuencia + meta) y `archivos` (los `File` de audio originales,
-  indexados por `fileRef`). Guardar reemplaza por completo lo anterior. Multi-
-  proyecto con nombres queda para Fase 2. Ver `features/persistence/projectStore.ts`.
+- **IndexedDB, multi-proyecto nombrado** (implementado en el change
+  `named-sessions`): cada proyecto recibe un ID generado y un nombre asignado
+  por el usuario al primer guardado. El store `proyecto` admite múltiples
+  entradas (clave = `snapshot.id`) y `archivos` usa la clave compuesta
+  `${projectId}/${fileRef}` para aislar los archivos por sesión. DB_VERSION 2.
+  Ver `features/persistence/projectStore.ts` y el change `named-sessions`.
 - **Carga = re-decodificar**: al abrir un proyecto se vuelve a decodificar cada
   `File` a `AudioBuffer` y se repuebla el `trackStore`; luego se reemplaza el
   estado de los hooks (`reemplazarPistas/Bloques/Secuencia`).

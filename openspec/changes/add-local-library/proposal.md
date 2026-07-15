@@ -28,4 +28,5 @@ queden ligados a la canción y reaparezcan al volver a cargarla, y que exista un
   que el proyecto guarde la secuencia por referencia y no duplique los audios.
 
 ## Fuera de alcance
-- Export MP3, multi-proyecto con nombres y modo "dos decks" (Fase 2 aparte).
+- Export MP3 y modo "dos decks" (Fase 2 aparte).
+- Multi-proyecto con nombres: implementado en el change `named-sessions`.
